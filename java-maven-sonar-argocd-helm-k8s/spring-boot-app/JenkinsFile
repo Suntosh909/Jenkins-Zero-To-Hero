@@ -6,9 +6,9 @@ pipeline {
     }
   }
 
-  tools {
-    jdk 'Java_17' // This tells Jenkins to use the Java 17 installed via Global Tool Configuration
-  }
+  //tools {
+    //jdk 'Java_17' // This tells Jenkins to use the Java 17 installed via Global Tool Configuration
+  //}
 
   environment {
     SONAR_URL = "http://3.25.91.193:9000" // Replace with your actual SonarQube URL
