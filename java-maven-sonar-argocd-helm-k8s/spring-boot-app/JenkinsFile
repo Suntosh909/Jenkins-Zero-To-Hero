@@ -1,63 +1,49 @@
-
 pipeline {
   agent {
     docker {
-      image 'maven:eclipse-temurin:17.0.10_7-jre-alpine'
+      image 'abhishekf5/maven-abhishek-docker-agent:v2'
       args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
     }
   }
 
-  stages {
+  tools {
+    jdk 'Java_17' // This tells Jenkins to use the Java 17 installed via Global Tool Configuration
+  }
 
+  environment {
+    SONAR_URL = "https://your-sonarqube-server.com" // Replace with your actual SonarQube URL
+  }
+
+  stages {
     stage('Checkout') {
       steps {
-        echo "Cloning Repository"
-        git branch: 'main', url: 'https://github.com/Suntosh909/Jenkins-Zero-To-Hero.git'
-      }
-    }
-
-    stage('Check Java Version') {
-      steps {
-        sh 'java -version'
+        sh 'echo passed'
+        // git branch: 'main', url: 'https://github.com/Suntosh909/Jenkins-Zero-To-Hero.git'
       }
     }
 
     stage('Build and Test') {
       steps {
-        sh '''
-        cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
-        mvn clean package
-        '''
+        sh 'ls -ltr'
+        sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
       }
     }
 
     stage('Static Code Analysis') {
-      environment {
-        SONAR_URL = "http://3.25.91.193:9000"
-      }
       steps {
         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
           sh '''
-          cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
-          mvn clean verify sonar:sonar \
-          -Dsonar.login=$SONAR_AUTH_TOKEN \
-          -Dsonar.host.url=$SONAR_URL
+            cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && \
+            mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=spring-boot-app \
+            -Dsonar.host.url=$SONAR_URL \
+            -Dsonar.login=$SONAR_AUTH_TOKEN
           '''
         }
       }
     }
 
-    stage('Install Docker CLI') {
-      steps {
-        sh '''
-        apt-get update
-        apt-get install -y docker.io
-        docker --version
-        '''
-      }
-    }
-
-    stage('Build and Push Docker Image') {
+     stage('Build and Push Docker Image') {
       environment {
         DOCKER_IMAGE = "santosh909/ultimate-cicd:${BUILD_NUMBER}"
       }
@@ -103,4 +89,3 @@ pipeline {
     }
   }
 }
-
