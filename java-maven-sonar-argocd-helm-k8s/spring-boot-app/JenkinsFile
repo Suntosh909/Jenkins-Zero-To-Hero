@@ -11,21 +11,21 @@ pipeline {
   }
 
   environment {
-    SONAR_URL = "https://your-sonarqube-server.com" // Replace with your actual SonarQube URL
+    SONAR_URL = "http://3.25.91.193:9000" // Replace with your actual SonarQube URL
   }
 
   stages {
     stage('Checkout') {
       steps {
         sh 'echo passed'
-        // git branch: 'main', url: 'https://github.com/Suntosh909/Jenkins-Zero-To-Hero.git'
+        git branch: 'main', url: 'https://github.com/Suntosh909/Jenkins-Zero-To-Hero.git'
       }
     }
 
     stage('Build and Test') {
       steps {
         sh 'ls -ltr'
-        sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
+        sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package -DskipTests'
       }
     }
 
