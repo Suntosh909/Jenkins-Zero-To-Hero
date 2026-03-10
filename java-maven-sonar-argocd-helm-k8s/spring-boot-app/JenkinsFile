@@ -1,7 +1,7 @@
 pipeline {
   agent {
     docker {
-      image 'abhishekf5/maven-abhishek-docker-agent:v1'
+      image 'maven:3.9.6-eclipse-temurin-17'  // ✅ Java 17 + Maven, official image
       args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
     }
   }
@@ -25,15 +25,11 @@ pipeline {
       steps {
         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
           sh '''
-            export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
-            java -version
-
             cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && \
-            mvn clean verify sonar:sonar \
+            mvn sonar:sonar \
               -Dsonar.projectKey=spring-boot-app \
               -Dsonar.host.url=$SONAR_URL \
-              -Dsonar.login=$SONAR_AUTH_TOKEN \
-              -Dsonar.java.jdkHome=$JAVA_HOME
+              -Dsonar.login=$SONAR_AUTH_TOKEN
           '''
         }
       }
