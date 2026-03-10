@@ -11,7 +11,7 @@ pipeline {
   //}
 
   environment {
-    SONAR_URL = "http://3.25.91.193:9000" // Replace with your actual SonarQube URL
+    SONAR_URL = "http://3.26.232.159:9000" // Replace with your actual SonarQube URL
   }
 
   stages {
